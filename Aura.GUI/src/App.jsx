@@ -1,30 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './index.css';
 import Login from './auth/Login.jsx'; 
+import AdminPages from './pages/admin/AdminPages.jsx';
+import JuzgadosPage from './pages/juzgados/JuzgadosPage.jsx'; 
+import AccionadosPage from './pages/accionado/AccionadosPage.jsx';
+// Componente Footer optimizado
+const GlobalFooter = () => (
+  <footer className="aura-mini-footer">
+    <p>
+      Copyright © 2026 <strong>FOSCAL</strong> | Fundación Oftalmológica de Santander - Clínica FOSCAL. Floridablanca, Colombia.
+    </p>
+  </footer>
+);
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(true); 
   const [tab, setTab] = useState('inicio');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMaestrosOpen, setIsMaestrosOpen] = useState(false); 
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    const initAuth = () => {
+      const savedUser = localStorage.getItem('aura_user');
+      const savedToken = localStorage.getItem('aura_token');
+
+      if (savedUser && savedToken) {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          setUserData(parsedUser);
+          setIsLoggedIn(true);
+        } catch (error) {
+          console.error("Error al restaurar sesión:", error);
+          localStorage.clear();
+        }
+      }
+      
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1200);
+
+      return timer;
+    };
+
+    const authTimer = initAuth();
+    return () => clearTimeout(authTimer);
+  }, []);
 
   const handleLogin = (data) => {
-    setUserData(data); 
     setIsLoading(true); 
+    setImgError(false); 
+    localStorage.setItem('aura_token', data.token);
+    localStorage.setItem('aura_user', JSON.stringify(data.user));
+    setUserData(data.user); 
     
     setTimeout(() => {
       setIsLoading(false);
       setIsLoggedIn(true);
-    }, 2500); 
+    }, 2000); 
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('aura_token');
+    localStorage.removeItem('aura_user');
     setIsLoggedIn(false);
     setUserData(null);
     setIsUserMenuOpen(false); 
     setTab('inicio'); 
+    setImgError(false);
   };
 
   if (isLoading) {
@@ -32,114 +78,208 @@ function App() {
       <div className="aura-loader-container">
         <div className="aura-loader-content">
           <div className="aura-logo-animated">AURA</div>
-          <h2 className="aura-welcome-text">Bienvenido...</h2>
+          <h2 className="aura-welcome-text">Cargando...</h2>
           <div className="aura-progress-bar">
             <div className="aura-progress-fill"></div>
           </div>
-          <p className="aura-loading-sub">Sincronizando con sistemas FOSCAL...</p>
+          <p className="aura-loading-sub">Sincronizando con sistema Tutelas FOSCAL</p>
         </div>
+        <GlobalFooter />
+      </div>
+    );   
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <div className="login-wrapper-fixed">
+        <Login onLogin={handleLogin} />
+        <GlobalFooter />
       </div>
     );
   }
 
-  if (!isLoggedIn) {
-    return <Login onLogin={handleLogin} />;
-  }
-
-  const currentUserName = userData?.email ? userData.email.split('@')[0] : 'Usuario';
+  const currentUserName = userData?.name || 'Usuario';
+  const userRole = userData?.role || 'LECTOR';
 
   return (
     <div className={`app-container ${!isSidebarOpen ? 'sidebar-closed' : ''}`}>
-      
       <aside className="sidebar">
-        <button 
-          className="toggle-sidebar-btn" 
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        >
+        <button className="toggle-sidebar-btn" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
           {isSidebarOpen ? '❮' : '❯'}
         </button>
-
         <div className="sidebar-content">
           <div className="brand-section">
             <div className="brand-logo">AURA</div>
-            <div className="brand-subtitle">FOSCAL 2026</div>
+            <div className="brand-subtitle">TUTELAS FOSCAL 2026</div>
           </div>
-
+          
           <nav className="nav-menu">
             <button className={`nav-item ${tab === 'inicio' ? 'active' : ''}`} onClick={() => setTab('inicio')}>
-              <span className="nav-icon">🏠</span>
-              <span className="nav-text">Inicio</span>
+              <span className="nav-icon">🏠</span> <span className="nav-text">Inicio</span>
             </button>
-            <button className={`nav-item ${tab === 'est' ? 'active' : ''}`} onClick={() => setTab('est')}>
-              <span className="nav-icon">📊</span>
-              <span className="nav-text">Tutelas</span>
-            </button>
-            <button className={`nav-item ${tab === 'aud' ? 'active' : ''}`} onClick={() => setTab('aud')}>
-              <span className="nav-icon">🛡️</span>
-              <span className="nav-text">Auditoría</span>
-            </button>
+            
+            {(userRole === 'ADMIN' || userRole === 'TECNICO') && (
+              <button className={`nav-item ${tab === 'est' ? 'active' : ''}`} onClick={() => setTab('est')}>
+                <span className="nav-icon">📊</span> <span className="nav-text">Tutelas</span>
+              </button>
+            )}
+
+            {userRole === 'ADMIN' && (
+              <>
+                <div className={`nav-group ${isMaestrosOpen ? 'group-open' : ''}`}>
+                  <button 
+                    className={`nav-item ${tab.startsWith('m-') ? 'active' : ''}`} 
+                    onClick={() => setIsMaestrosOpen(!isMaestrosOpen)}
+                  >
+                    <span className="nav-icon">📁</span> 
+                    <span className="nav-text">Maestros</span>
+                    <span className={`arrow-submenu ${isMaestrosOpen ? 'rotate' : ''}`}>▾</span>
+                  </button>
+                  
+                  {isMaestrosOpen && (
+                    <div className="sub-menu fade-in">
+                      <button 
+                        className={`sub-nav-item ${tab === 'm-juzgados' ? 'sub-active' : ''}`} 
+                        onClick={() => setTab('m-juzgados')}
+                      >
+                         ⚖️ Juzgados
+                      </button>
+                      {/* NUEVO BOTÓN DE ACCIONADOS */}
+                      <button 
+                        className={`sub-nav-item ${tab === 'm-accionados' ? 'sub-active' : ''}`} 
+                        onClick={() => setTab('m-accionados')}
+                      >
+                         👤 Accionados
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <button className={`nav-item ${tab === 'aud' ? 'active' : ''}`} onClick={() => setTab('aud')}>
+                  <span className="nav-icon">🛡️</span> <span className="nav-text">Auditoría</span>
+                </button>
+                <button className={`nav-item ${tab === 'admin' ? 'active' : ''}`} onClick={() => setTab('admin')}>
+                  <span className="nav-icon">⚙️</span> <span className="nav-text">Administración</span>
+                </button>
+              </>
+            )}
           </nav>
         </div>
       </aside>
 
       <main className="main-view">
-        <div className="user-section-wrapper">
-          <div 
-            className={`user-profile-banner ${isUserMenuOpen ? 'banner-active' : ''}`} 
-            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-          >
-            <div className="avatar-container">
-              <div className="avatar-circle">
-                {currentUserName[0].toUpperCase()}
-              </div>
-              <span className="online-indicator"></span>
+        <div className="top-bar-container">
+            <div className="user-section-wrapper">
+                <div 
+                className={`user-profile-banner ${isUserMenuOpen ? 'banner-active' : ''}`} 
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                >
+                <div className="avatar-container">
+                    {userData?.picture && !imgError ? (
+                    <img 
+                        src={userData.picture} 
+                        alt="profile" 
+                        className="avatar-img" 
+                        onError={() => setImgError(true)} 
+                    />
+                    ) : (
+                    <div className="avatar-circle">
+                        {currentUserName[0].toUpperCase()}
+                    </div>
+                    )}
+                    <span className="online-indicator"></span>
+                </div>
+                <div className="user-details">
+                    <span className="user-name-text">{currentUserName}</span>
+                    <span className={`user-role-badge role-${userRole.toLowerCase()}`}>{userRole}</span>
+                </div>
+                <span className={`arrow-icon ${isUserMenuOpen ? 'rotate' : ''}`}>▼</span>
+                </div>
+                {isUserMenuOpen && (
+                <div className="user-dropdown">
+                    <div className="dropdown-header">Sesión: {userData?.email}</div>
+                    <button className="dropdown-item logout-btn" onClick={handleLogout}>Cerrar Sesión</button>
+                </div>
+                )}
             </div>
-            <div className="user-details">
-              <span className="user-name-text">
-                {currentUserName}
-              </span>
-              <span className="user-role-badge">ADMINISTRADOR</span>
-            </div>
-            <span className={`arrow-icon ${isUserMenuOpen ? 'rotate' : ''}`}>▼</span>
-          </div>
-
-          {isUserMenuOpen && (
-            <div className="user-dropdown">
-              <div className="dropdown-header">Mi Cuenta</div>
-              <button className="dropdown-item"> Configuración</button>
-              <button className="dropdown-item logout-btn" onClick={handleLogout}>
-                 Cerrar Sesión
-              </button>
-            </div>
-          )}
         </div>
 
-        <header className="user-header">
-          <div className="welcome-badge">
-            <span className="welcome-tag">Bienvenido al sistema,</span>
-            <h1 className="main-title">
-              {currentUserName}
-            </h1>
-          </div>
-        </header>
+        <div className="content-scroll-area">
+          <div className="view-content-container">
+            {tab === 'inicio' && (
+              <div className="aura-home-view">
+                <header className="innovative-hero">
+                    <div className="hero-content">
+                        <span className="hero-badge">Panel de Control FOSCAL 2026</span>
+                        <h1 className="hero-title">Hola, <span className="text-gradient">{currentUserName}</span></h1>
+                        <p className="hero-subtitle">Bienvenido a la plataforma centralizada de gestión de Tutelas.</p>
+                    </div>
+                </header>
 
-        <div className="dashboard-grid">
-          <div className="aura-card card-blue">
-            <span className="card-icon">📊</span>
-            <h3>Estadísticas Orion</h3>
-            <p>Análisis operativo y visualización de datos con precisión AURA.</p>
-          </div>
+                {userRole === 'LECTOR' ? (
+                  <div className="access-denied-container">
+                    <div className="access-denied-card">
+                      <div className="denied-icon-wrapper">
+                        <span className="denied-icon">🔒</span>
+                      </div>
+                      <h2>Acceso Restringido</h2>
+                      <p>Hola <strong>{currentUserName}</strong>. Tu perfil no tiene permisos asignados para este módulo.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="dashboard-grid-modern">
+                    <div className="luxury-card card-blue" onClick={() => setTab('est')}>
+                      <div className="luxury-icon-box">📊</div>
+                      <div className="luxury-content">
+                        <h3>Estadísticas Orion</h3>
+                        <p>Analítica avanzada y visualización de datos en tiempo real.</p>
+                        <span className="luxury-link">Explorar módulo →</span>
+                      </div>
+                    </div>
+                    <div className="luxury-card card-green">
+                      <div className="luxury-icon-box">📁</div>
+                      <div className="luxury-content">
+                        <h3>Gestión Documental</h3>
+                        <p>Repositorio seguro para expedientes y documentos institucionales.</p>
+                        <span className="luxury-link">Acceder ahora →</span>
+                      </div>
+                    </div>
+                    {userRole === 'ADMIN' && (
+                      <div className="luxury-card card-mixed" onClick={() => setTab('aud')}>
+                        <div className="luxury-icon-box">🛡️</div>
+                        <div className="luxury-content">
+                          <h3>Auditoría</h3>
+                          <p>Trazabilidad completa y seguridad de protocolos internos.</p>
+                          <span className="luxury-link">Ver bitácora →</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <GlobalFooter />
+              </div>
+            )}
 
-          <div className="aura-card card-green">
-            <span className="card-icon">📁</span>
-            <h3>Gestión Documental</h3>
-            <p>Control total y archivo centralizado de registros digitales.</p>
-          </div>
+            {/* VISTAS DE ADMINISTRACIÓN */}
+            {tab === 'admin' && userRole === 'ADMIN' && (
+                <div className="admin-view-wrapper fade-in">
+                    <AdminPages />
+                </div>
+            )}
 
-          <div className="aura-card card-orange">
-            <span className="card-icon">🛡️</span>
-            <h3>Auditoría de Acceso</h3>
-            <p>Seguimiento detallado de logs y protocolos de seguridad.</p>
+            {/* VISTA DE MAESTRO JUZGADOS */}
+            {tab === 'm-juzgados' && userRole === 'ADMIN' && (
+                <div className="admin-view-wrapper fade-in">
+                    <JuzgadosPage />
+                </div>
+            )}
+
+            {/* NUEVA VISTA DE MAESTRO ACCIONADOS */}
+            {tab === 'm-accionados' && userRole === 'ADMIN' && (
+                <div className="admin-view-wrapper fade-in">
+                    <AccionadosPage />
+                </div>
+            )}
           </div>
         </div>
       </main>

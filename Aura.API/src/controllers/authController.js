@@ -1,39 +1,54 @@
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken');
+
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 exports.googleLogin = async (req, res) => {
-  const { idToken } = req.body;
+  const { token } = req.body;
 
   try {
     const ticket = await client.verifyIdToken({
-      idToken,
+      idToken: token, 
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-    const { sub, email, name, picture } = ticket.getPayload();
 
-    let user = await User.findOne({ googleId: sub });
+    const { sub: googleId, email, name, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
 
     if (!user) {
-      user = new User({
-        googleId: sub,
+      user = await User.create({
+        googleId,
         name,
         email,
-        avatar: picture,
-        role: 'USER' 
+        picture,
+        role: 'LECTOR' 
       });
+    } else {
+      user.lastLogin = Date.now();
       await user.save();
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
+    const auraToken = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '8h' }
     );
 
-    res.json({ token, user });
+    res.json({
+      token: auraToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        picture: user.picture
+      }
+    });
+
   } catch (error) {
-    res.status(400).json({ msg: 'Token de Google no válido' });
+    console.error("Error validando token Google:", error);
+    res.status(401).json({ message: 'Sesión de Google no válida' });
   }
 };

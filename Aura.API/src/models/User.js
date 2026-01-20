@@ -1,17 +1,22 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  googleId: { type: String, required: true, unique: true },
-  name: String,
+  googleId: { type: String, unique: true },
+  name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  avatar: String,
+  picture: String,
   role: { 
     type: String, 
-    enum: ['ADMIN', 'USER', 'AUDITOR'], 
-    default: 'USER' 
+    enum: ['ADMIN', 'TECNICO', 'LECTOR'], 
+    default: 'LECTOR' 
   },
-  permissions: { type: [String], default: [] },
-  active: { type: Boolean, default: true }
+  // Añadimos los permisos granulares
+  permisos: {
+    tutelas: { type: Boolean, default: false },
+    gestionDocumental: { type: Boolean, default: false },
+    auditoria: { type: Boolean, default: false }
+  },
+  lastLogin: { type: Date, default: Date.now }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

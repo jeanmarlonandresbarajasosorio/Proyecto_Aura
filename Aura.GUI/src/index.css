@@ -15,7 +15,7 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: #f1f5f9; /* Cambiado a un gris sutil */
+  background: #f1f5f9; 
   color: var(--text-main);
   overflow: hidden;
 }
@@ -410,4 +410,564 @@ body {
   color: var(--sidebar-blue-bottom);
   margin: 0;
   letter-spacing: -1px;
+}
+/* Footer Global */
+.aura-mini-footer {
+  width: 100%;
+  padding: 10px 0;
+  text-align: center;
+  z-index: 100;
+}
+
+/* En Loader y Login: Forzado abajo del todo sin ocupar espacio central */
+.aura-loader-container .aura-mini-footer,
+.login-wrapper-fixed .aura-mini-footer {
+  position: fixed;
+  bottom: 10px;
+  left: 0;
+}
+
+/* En Dashboard: Al final del contenido */
+.main-view .aura-mini-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.aura-mini-footer p {
+  color: rgba(255, 255, 255, 0.5); /* Sutil en fondo azul */
+  font-size: 11px;                 /* Tamaño solicitado, más legible */
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  letter-spacing: 0.3px;
+}
+
+/* Ajuste de color para el dashboard (fondo blanco) */
+.main-view .aura-mini-footer p {
+  color: #888;
+}
+
+.aura-mini-footer strong {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.main-view .aura-mini-footer strong {
+  color: #555;
+}
+
+.main-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-scroll-area {
+  flex: 1;
+}
+/* --- USER PROFILE (Versión Mini y Uniforme) --- */
+.user-section-wrapper { 
+  position: absolute; 
+  top: 20px; /* Bajado un poco más para balance */
+  right: 40px; 
+  z-index: 200; 
+}
+
+.user-profile-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Reducido de 15px */
+  background: linear-gradient(135deg, var(--green-bright) -20%, var(--green-main) 50%, var(--green-dark) 120%);
+  padding: 6px 16px 6px 6px; /* Reducido significativamente */
+  border-radius: 40px; /* Más compacto */
+  box-shadow: 0 8px 20px rgba(141, 198, 63, 0.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 38px; /* Altura fija para uniformidad */
+}
+
+.user-profile-banner:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 10px 25px rgba(141, 198, 63, 0.4);
+}
+
+.avatar-container { position: relative; display: flex; align-items: center; }
+
+.avatar-circle {
+  width: 30px; /* Antes 42px */
+  height: 30px; /* Antes 42px */
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px; /* Letra más pequeña */
+  color: var(--green-dark);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.avatar-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 10px; 
+  height: 10px; 
+  background: #22c55e;
+  border: 1.5px solid white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: row; 
+  align-items: baseline;
+  gap: 6px;
+}
+
+.user-name-text { 
+  color: white; 
+  font-weight: 700; 
+  font-size: 13px; 
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1); 
+}
+
+.user-role-badge { 
+  color: rgba(255, 255, 255, 0.9); 
+  font-size: 9px; 
+  font-weight: 800; 
+  background: rgba(0,0,0,0.15); 
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: uppercase; 
+}
+
+.arrow-icon {
+  font-size: 10px;
+  color: white;
+  margin-left: 5px;
+  transition: transform 0.3s ease;
+}
+
+.arrow-icon.rotate { transform: rotate(180deg); }
+.access-denied-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  animation: auraFadeIn 0.6s ease-out;
+}
+
+.access-denied-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(15px);
+  max-width: 500px;
+  width: 100%;
+  padding: 45px 30px;
+  border-radius: 35px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-top: 5px solid #ef4444; 
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.denied-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 25px;
+}
+
+.denied-icon {
+  font-size: 40px;
+  filter: drop-shadow(0 2px 5px rgba(239, 68, 68, 0.3));
+}
+
+.access-denied-card h2 {
+  color: #1e293b;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  letter-spacing: -0.5px;
+}
+
+.access-denied-card p {
+  color: #64748b;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.access-denied-card strong {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.denied-footer {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.denied-footer p {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #94a3b8;
+  margin: 0;
+}
+/* 1. Fondo del proyecto más oscuro */
+body, .app-container {
+    background-color: #f0f2f5; 
+}
+
+.main-view {
+    background-color: #ebedf0; 
+}
+
+.welcome-container-modern {
+    padding: 40px 0 20px 0;
+    margin-bottom: 30px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.welcome-label {
+    display: block;
+    font-size: 1.1rem;
+    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.welcome-name {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #1e293b; 
+    margin: 0;
+    line-height: 1;
+    background: linear-gradient(90deg, #1e293b, #334155);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcome-separator {
+    width: 60px;
+    height: 5px;
+    background: #0056b3; 
+    margin-top: 15px;
+    border-radius: 10px;
+}
+
+.aura-mini-footer {
+    margin-top: 50px;
+    padding: 20px 0;
+    border-top: 1px solid #d1d5db;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* --- VARIABLES DE MARCA FOSCAL --- */
+:root {
+  /* Azules */
+  --aura-primary: #0052cc;
+  --aura-primary-light: #eef4ff;
+  --aura-blue-deep: #1e3a8a;
+  
+  /* Verdes Institucionales */
+  --aura-green: #22c55e;
+  --aura-green-soft: #f0fdf4;
+  --aura-green-dark: #15803d;
+
+  /* Neutros y Acentos */
+  --aura-bg: #f8fafc;
+  --aura-text-main: #1e293b;
+  --aura-text-soft: #64748b;
+  --aura-accent: #0ea5e9;
+  
+  /* Sombras y Transiciones */
+  --aura-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  --aura-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- ANIMACIONES --- */
+@keyframes auraFadeInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* --- ESTILOS DE INICIO (ENCAPSULADOS) --- */
+.aura-home-view {
+  animation: auraFadeInUp 0.8s ease-out forwards;
+  padding: 1.5rem;
+}
+
+/* Hero Section con degradado suave azul/verde */
+.aura-home-view .innovative-hero {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #f0fdf4 100%);
+  padding: 3rem 2.5rem;
+  border-radius: 24px;
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(0, 82, 204, 0.05);
+  box-shadow: var(--aura-shadow);
+}
+
+.aura-home-view .hero-badge {
+  background: white;
+  color: var(--aura-green-dark);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1px solid var(--aura-green-soft);
+  display: inline-block;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.aura-home-view .hero-title {
+  font-size: 2.2rem;
+  color: var(--aura-blue-deep);
+  margin-bottom: 0.5rem;
+}
+
+.aura-home-view .text-gradient {
+  background: linear-gradient(90deg, var(--aura-primary), var(--aura-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+/* Grid de Tarjetas */
+.aura-home-view .dashboard-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* Estilo Base de Tarjeta Luxury */
+.aura-home-view .luxury-card {
+  background: white;
+  padding: 2.5rem 2rem;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  transition: var(--aura-transition);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.aura-home-view .luxury-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 4px;
+  opacity: 0;
+  transition: var(--aura-transition);
+}
+
+.aura-home-view .luxury-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+}
+
+.aura-home-view .luxury-card:hover::before {
+  opacity: 1;
+}
+
+/* Variación Azul: Estadísticas */
+.aura-home-view .luxury-card.card-blue:hover {
+  border-color: var(--aura-primary);
+}
+.aura-home-view .luxury-card.card-blue::before {
+  background: var(--aura-primary);
+}
+.aura-home-view .card-blue .luxury-icon-box {
+  background: var(--aura-primary-light);
+  color: var(--aura-primary);
+}
+
+/* Variación Verde: Gestión */
+.aura-home-view .luxury-card.card-green:hover {
+  border-color: var(--aura-green);
+}
+.aura-home-view .luxury-card.card-green::before {
+  background: var(--aura-green);
+}
+.aura-home-view .card-green .luxury-icon-box {
+  background: var(--aura-green-soft);
+  color: var(--aura-green);
+}
+
+/* Variación Mixta: Auditoría */
+.aura-home-view .luxury-card.card-mixed:hover {
+  border-color: var(--aura-accent);
+}
+.aura-home-view .luxury-card.card-mixed::before {
+  background: linear-gradient(90deg, var(--aura-primary), var(--aura-green));
+}
+
+/* Iconos y Texto Interno */
+.aura-home-view .luxury-icon-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  transition: var(--aura-transition);
+}
+
+.aura-home-view .luxury-card:hover .luxury-icon-box {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.aura-home-view .luxury-content h3 {
+  color: var(--aura-text-main);
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.aura-home-view .luxury-content p {
+  color: var(--aura-text-soft);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.aura-home-view .luxury-link {
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aura-home-view .card-blue .luxury-link { color: var(--aura-primary); }
+.aura-home-view .card-green .luxury-link { color: var(--aura-green-dark); }
+.aura-home-view .card-mixed .luxury-link { color: var(--aura-blue-deep); }
+/* --- ESTILOS MEJORADOS PARA MAESTROS Y SUBMENÚ --- */
+
+.nav-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4px;
+}
+
+/* Contenedor del Submenú con efecto Glassmorphism */
+.sub-menu {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0 12px; /* Margen lateral para no pegar al borde del sidebar */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.05); /* Fondo sutil */
+  backdrop-filter: blur(10px);
+  border-radius: 0 0 15px 15px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.group-open .sub-menu {
+  max-height: 300px; 
+  padding: 10px 10px 10px 20px;
+  opacity: 1;
+  margin-bottom: 8px;
+}
+
+/* Items del Submenú */
+.sub-nav-item {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.65);
+  text-align: left;
+  padding: 10px 15px;
+  font-size: 13px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sub-nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: translateX(5px);
+}
+
+/* Estado Activo del Sub-item (Mismo verde de tu logo/badge) */
+.sub-nav-item.sub-active {
+  background: linear-gradient(90deg, rgba(141, 198, 63, 0.15) 0%, rgba(141, 198, 63, 0) 100%);
+  color: #adff2f; /* Verde brillante Foscal */
+  font-weight: 600;
+  border-left: 3px solid #8dc63f;
+}
+
+/* Ajuste del botón padre cuando el grupo está abierto */
+.group-open > .nav-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px 15px 0 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.arrow-submenu {
+  margin-left: auto;
+  font-size: 12px;
+  transition: transform 0.4s ease;
+  opacity: 0.5;
+}
+
+.group-open .arrow-submenu {
+  transform: rotate(180deg);
+  opacity: 1;
+  color: #adff2f;
+}
+
+.sidebar-closed .sub-menu {
+  display: none;
+}
+
+.sidebar-closed .nav-group:hover .sub-menu {
 }
